@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@500;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+body { @apply bg-surface-100 text-white font-inter; }
+
+.neon-gradient {
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(0,229,255,0.15), transparent 50%),
+              radial-gradient(1200px 800px at 90% 20%, rgba(124,77,255,0.15), transparent 50%),
+              radial-gradient(1000px 600px at 50% 90%, rgba(79,195,247,0.12), transparent 50%);
+}
+
+.glass {
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.btn-primary { @apply inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-neon-blue to-neon-purple text-white font-semibold shadow-glow hover:opacity-95 transition; }
+.btn-ghost { @apply inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition; }
+.card { @apply glass rounded-2xl shadow-lg; }
+
+
