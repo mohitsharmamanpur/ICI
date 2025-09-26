@@ -1,0 +1,11 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Dataset - Do not upload large data files to Git
+ml_model/chest_xray/
+
+# IDE files
+.vscode/
+.idea/
