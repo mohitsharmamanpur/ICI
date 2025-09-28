@@ -1,5 +1,5 @@
-# Use a TensorFlow base image to ensure compatibility with TF dependencies
-FROM tensorflow/tensorflow:2.12.0
+# Use a recent TensorFlow image compatible with Keras 3 (used during training)
+FROM tensorflow/tensorflow:2.16.1
 
 # Set the working directory in the container
 WORKDIR /app

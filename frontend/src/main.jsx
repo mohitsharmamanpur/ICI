@@ -11,6 +11,7 @@ import Dashboard from './views/Dashboard.jsx'
 import Login from './views/auth/Login.jsx'
 import Signup from './views/auth/Signup.jsx'
 import Profile from './views/auth/Profile.jsx'
+import ScanDetail from './views/ScanDetail.jsx'
 import { AuthProvider } from './state/AuthContext.jsx'
 import ProtectedRoute from './ui/ProtectedRoute.jsx'
 import { Toaster } from 'react-hot-toast'
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: 'loading', element: <ProtectedRoute><Loading /></ProtectedRoute> },
       { path: 'results', element: <ProtectedRoute><Results /></ProtectedRoute> },
       { path: 'dashboard', element: <ProtectedRoute><Dashboard /></ProtectedRoute> },
+      { path: 'scan/:id', element: <ProtectedRoute><ScanDetail /></ProtectedRoute> },
       { path: 'login', element: <Login /> },
       { path: 'signup', element: <Signup /> },
       { path: 'profile', element: <ProtectedRoute><Profile /></ProtectedRoute> },

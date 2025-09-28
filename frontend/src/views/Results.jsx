@@ -3,9 +3,11 @@ import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { CheckCircle2, XCircle, ArrowLeftRight } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
-import { db } from '../state/AuthContext.jsx'
+import { db, storage } from '../state/AuthContext.jsx'
 import { useAuth } from '../state/AuthContext.jsx'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import toast from 'react-hot-toast'
 
 export default function Results(){
   const { state } = useLocation()
@@ -13,6 +15,9 @@ export default function Results(){
   const result = state?.result || 'Normal'
   const confidence = state?.confidence ?? 85
   const previewUrl = state?.previewUrl
+  const file = state?.file
+  const patientName = state?.patientName || ''
+  const notes = state?.notes || ''
 
   const isPneumonia = result.toLowerCase() === 'pneumonia'
   const data = [
@@ -24,14 +29,43 @@ export default function Results(){
   useEffect(()=>{
     async function save(){
       if(!user) return
+      let imageUrl = ''
+      let storagePath = ''
+      try{
+        // Upload original image to Firebase Storage if available
+        if(file){
+          const safeName = (state?.fileName || 'scan').replace(/[^a-zA-Z0-9._-]/g,'_')
+          const stamp = Date.now()
+          storagePath = `users/${user.uid}/scans/${stamp}-${safeName}`
+          const storageRef = ref(storage, storagePath)
+          await uploadBytes(storageRef, file)
+          imageUrl = await getDownloadURL(storageRef)
+        }
+      } catch(e){
+        console.error('Storage upload failed:', e)
+        toast.error('Saved report without image (storage upload failed).')
+        // continue to save Firestore doc without imageUrl
+      }
+
       try{
         await addDoc(collection(db, 'users', user.uid, 'scans'), {
           result,
           confidence,
           fileName: state?.fileName || '',
+          imageUrl,
+          storagePath,
+          userId: user.uid,
+          patientName,
+          notes,
           createdAt: serverTimestamp(),
+          createdAtMs: Date.now(),
         })
-      } catch(e){ /* ignore for demo */ }
+        // optional success toast
+        // toast.success('Report saved to your dashboard')
+      } catch(e){
+        console.error('Failed to save report to Firestore:', e)
+        toast.error('Could not save report to your account. Check Firestore rules and config.')
+      }
     }
     save()
   },[])

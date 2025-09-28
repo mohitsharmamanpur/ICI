@@ -9,9 +9,11 @@ export default function Upload(){
   const navigate = useNavigate()
   const [file, setFile] = useState(null)
   const [error, setError] = useState('')
+  const [patientName, setPatientName] = useState('')
+  const [notes, setNotes] = useState('')
   const previewUrl = useMemo(()=> file ? URL.createObjectURL(file) : '', [file])
 
-  const onFiles = useCallback((files)=>{
+  const onFiles = useCallback(async (files)=>{
     const f = files?.[0]
     if(!f) return
     if(!ACCEPTED.includes(f.type)){
@@ -35,7 +37,7 @@ export default function Upload(){
 
   const handleAnalyze = async ()=>{
     // Navigate to loading and include the File so the Loading screen can call the API
-    navigate('/loading', { state: { file, fileName: file?.name, previewUrl } })
+    navigate('/loading', { state: { file, fileName: file?.name, previewUrl, patientName, notes } })
   }
 
   return (
@@ -62,6 +64,19 @@ export default function Upload(){
               <AlertCircle size={16}/> <span className="text-sm">{error}</span>
             </div>
           )}
+
+          <div className="mt-6 grid grid-cols-1 gap-3">
+            <div>
+              <label className="text-sm text-white/70">Patient Name (optional)</label>
+              <input value={patientName} onChange={(e)=>setPatientName(e.target.value)} placeholder="e.g., John Doe"
+                className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 outline-none focus:border-neon-blue/40"/>
+            </div>
+            <div>
+              <label className="text-sm text-white/70">Notes (optional)</label>
+              <textarea value={notes} onChange={(e)=>setNotes(e.target.value)} rows={3} placeholder="Any clinical notes"
+                className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 outline-none focus:border-neon-blue/40"/>
+            </div>
+          </div>
 
           <button disabled={!file} onClick={handleAnalyze} className={`mt-6 w-full btn-primary ${!file ? 'opacity-50 cursor-not-allowed':''}`}>
             Analyze X-Ray

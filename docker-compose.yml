@@ -1,17 +1,18 @@
 services:
   backend:
     build: ./backend
+    container_name: pneumonia-backend
     ports:
       - "5000:5000"
-    volumes:
-      - ./backend:/app
-    command: python app.py
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
 
   frontend:
-    # Use a simple web server to host the static frontend
-    image: httpd:2.4-alpine
+    build: ./frontend
+    container_name: pneumonia-frontend
     ports:
-      - "8080:80"
-    volumes:
-      # Mount the frontend folder into the server's web root
-      - ./frontend:/usr/local/apache2/htdocs/
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

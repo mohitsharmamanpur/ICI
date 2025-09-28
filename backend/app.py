@@ -33,7 +33,6 @@ def preprocess_image(image_bytes):
 @app.route('/api/predict', methods=['POST'])
 def predict():
     if model is None:
-        print("[predict] Model not loaded")
         return jsonify({'error': 'Model is not loaded!'}), 500
 
     if 'file' not in request.files:
@@ -66,6 +65,33 @@ def predict():
     except Exception as e:
         print(f"[predict] Error: {e}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/', methods=['GET'])
+def index():
+    return (
+        "API OK. Try GET /health or use the form at /predict (GET) to upload. "
+        "Programmatic clients should POST an image file to /predict or /api/predict."
+    ), 200
+
+@app.route('/predict', methods=['GET'])
+def predict_get_form():
+    # Simple HTML form to make it easy to test via browser
+    return (
+        """
+        <!doctype html>
+        <html>
+        <head><title>Upload X-ray</title></head>
+        <body>
+          <h3>Upload an image to /predict (POST)</h3>
+          <form action="/predict" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required />
+            <button type="submit">Analyze</button>
+          </form>
+          <p>Or POST multipart/form-data to /api/predict from your app.</p>
+        </body>
+        </html>
+        """
+    ), 200
 
 @app.route('/health', methods=['GET'])
 def health():

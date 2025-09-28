@@ -4,6 +4,7 @@ import { Search } from 'lucide-react'
 import { useAuth } from '../state/AuthContext.jsx'
 import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 import { db } from '../state/AuthContext.jsx'
+import { Link } from 'react-router-dom'
 
 export default function Dashboard(){
   const { user } = useAuth()
@@ -46,8 +47,10 @@ export default function Dashboard(){
             <tr>
               <th className="px-4 py-3">Timestamp</th>
               <th className="px-4 py-3">Result</th>
+              <th className="px-4 py-3">Patient</th>
               <th className="px-4 py-3">Confidence</th>
               <th className="px-4 py-3">Thumbnail</th>
+              <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -59,9 +62,17 @@ export default function Dashboard(){
                     {r.result}
                   </span>
                 </td>
+                <td className="px-4 py-3 text-white/80">{r.patientName || '—'}</td>
                 <td className="px-4 py-3 text-white/80">{r.confidence}%</td>
                 <td className="px-4 py-3">
-                  <div className="h-10 w-10 rounded-md bg-white/10" />
+                  {r.imageUrl ? (
+                    <img src={r.imageUrl} alt={r.fileName || 'scan'} className="h-10 w-10 rounded-md object-cover" />
+                  ) : (
+                    <div className="h-10 w-10 rounded-md bg-white/10" />
+                  )}
+                </td>
+                <td className="px-4 py-3">
+                  <Link to={`/scan/${r.id}`} className="btn-ghost text-xs">View</Link>
                 </td>
               </tr>
             ))}
